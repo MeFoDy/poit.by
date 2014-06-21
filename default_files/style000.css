@@ -1,0 +1,987 @@
+/*== layout ==*/
+* {
+    margin: 0;
+}
+html, body {
+    height: 100%;
+}
+.wrapper {
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    margin: 0 auto -5.7em;
+    width: 950px;
+}
+
+.push {
+    height: 100px;
+    clear: both;
+}
+
+#footer{
+    height: 90px;
+    clear: both;
+}
+/*== / layout ==*/
+BODY {
+    background:url('header_b.png') repeat-x;
+    font-family: Arial;
+}
+
+#footer {
+    background: #848484 url('footer_b.png') repeat-x;
+    color: #feffff;
+}
+
+#header, #hmenu {
+    padding: 30px 0px;
+}
+
+#hmenu {
+    border-bottom: solid 1px #e8e8e8;
+    border-top: solid 1px #e8e8e8;
+    background: url('hmenu_bg.png') no-repeat center
+}
+
+#hmenu>TABLE {
+    width: 950px
+}
+
+#main {
+    float:left;
+    width:560px;
+    padding:10px;
+}
+
+#sidebar {
+    float:right;
+    width:305px;
+    padding:10px;
+}
+
+#sidebar H2 {
+    color:#69a011;
+    font-weight: normal;
+    font-style: italic;
+    margin: 20px 0px;
+}
+
+#hmenu>TABLE TD.img {
+    width: 147px;
+}
+
+#hmenu>TABLE TD.img IMG {
+    border-width: 0px;
+    float: right;
+}
+
+#hmenu>TABLE TD.txt {
+    color:#69a011;
+    font-size: 19px;
+    font-style: italic;
+    padding: 0px 20px 0px 10px;
+}
+
+#hmenu>TABLE TD.txt {
+
+}
+
+#hmenu>TABLE TD.txt A {
+    height: 20px;
+    white-space: nowrap;
+    padding: 5px 25px 5px 0px;
+    clear: both;
+    color: #429ace;
+    font-size: 14px;
+    background: url('arrow_ne.png') no-repeat right
+}
+
+P {
+    text-align: justify;
+    margin-bottom: 20px;
+    clear: both;
+}
+
+A {
+    color: #429ace;
+}
+
+.menu LI {
+    height: 45px;
+    width: 120px;
+    list-style-type: none;
+}
+
+.menu LI A {
+    width: 146px;
+    height: 20px;
+    display: block;
+    color: #429ace;
+    font-size: 14px;
+    background: url('arrow_me.png') no-repeat 10px 16px;
+    padding: 13px 10px 10px 25px;
+    text-decoration: none;
+}
+
+.menu LI A:hover {
+    text-decoration: underline;
+}
+
+.menu A.selected {
+    width: 146px;
+    height: 20px;
+    display: block;
+    color: #FFF;
+    background: url('http://poit.everymove.ru/images/menu_selected_bg.png') no-repeat;
+    padding: 13px 10px 10px 25px;
+}
+
+#footer>TABLE TH {
+    color: #fff;
+    height: 40px;
+    text-align: left;
+}
+
+#footer>TABLE UL A {
+    color: #fff;
+}
+
+#footer>TABLE {
+    padding-bottom: 30px;
+    margin: 0px auto;
+    width: 950px;
+    padding-top: 25px;
+}
+
+#footer>TABLE:first-child {
+    border-bottom: solid 1px #b1b1b1;
+}
+
+#footer>TABLE TD {
+    vertical-align: top;
+}
+
+#footer>TABLE UL {
+    list-style-type: none;
+    font-size: 12px;
+    padding: 0px;
+}
+
+#footer>TABLE UL LI {
+    margin: 5px 0px;
+}
+
+.search INPUT {
+    border-width: 0px;
+    height: 19px;
+}
+
+.search .tb {
+    height: 3px;
+    background: url(http://poit.everymove.ru/images/search_tb.png);
+}
+
+.search .tlc {
+    height: 3px;
+    background: url(http://poit.everymove.ru/images/search_tlc.png);
+}
+
+.search .trc {
+    height: 3px;
+    background: url(http://poit.everymove.ru/images/search_trc.png);
+}
+
+.search .blc {
+    height: 21px;
+    width: 13px;
+    background: url(http://poit.everymove.ru/images/search_blc.png);
+}
+
+.search .brc {
+    height: 21px;
+    width: 11px;
+    background: url(http://poit.everymove.ru/images/search_brc.png);
+}
+
+#news {
+    width: 100%;
+    background-color: #fafaeb;
+}
+
+#news .content {
+    color: #696963;
+    font-size: 12px;
+    text-align: justify;
+}
+
+#news .content A {
+    font-size: 20px;
+
+}
+
+#news .content DIV.h1 {
+    margin-bottom: 10px;
+    display: block;
+}
+
+#news A.rss {
+    height: 14px;
+    width: 14px;
+}
+
+#news A.rss IMG {
+    border: solid 0px;
+}
+
+#news .tlc {
+    background: url(http://poit.everymove.ru/images/news_tlc.png) no-repeat;
+    width: 18px;
+    height: 18px;
+}
+
+#news .ts {
+    border-top: solid 1px #d2dcbc
+}
+
+#news .ls {
+    border-left: solid 1px #d2dcbc
+}
+
+#news .trc {
+    background: url(http://poit.everymove.ru/images/news_trc.png) no-repeat;
+}
+
+#news .blc {
+    background: url(http://poit.everymove.ru/images/news_blc.png) no-repeat;
+}
+
+#news .bs {
+    border-bottom: solid 1px #d2dcbc
+}
+
+#news .brc {
+    background: url(http://poit.everymove.ru/images/news_brc.png) no-repeat;
+    width: 18px;
+    height: 18px;
+}
+
+#news .rs {
+    border-right: solid 1px #d2dcbc
+}
+
+SPAN.datetime {
+    display: block;
+    background: url('clock000.png') no-repeat;
+    padding-left: 25px;
+    color: #6b6b6b;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+#news_grid {
+    margin-top: 40px;
+    margin-left: 20px;
+}
+
+#news_grid A{
+    font-size:12px;
+}
+
+#main H2
+{
+    color:#69a011; font-weight: normal; font-style: italic; margin: 20px 0px;
+}
+
+.success_str {
+    margin-bottom: 50px;
+}
+
+.success_str .foto {
+    float: left;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    border: none;
+}
+
+.success_str P {
+    clear: both;
+    color: #363f30;
+}
+
+.success_str .who {
+    color: #787878;
+    display: block;
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.success_str .name {
+    color: #69A011;
+    text-decoration: none;
+    font-size: 16px;
+}
+.success_str A:hover {
+    color: #69A011;
+    text-decoration: underline;
+    font-size: 16px;
+}
+
+SPAN.quote {
+    font-style: italic;
+    color: #a8a8a8;
+}
+
+#forismatic {
+    border: solid 1px #eaecec;
+    padding: 10px;
+}
+
+#blogs {
+    font-size: 12px;
+    margin-bottom: 50px;
+}
+
+#blogs A {
+    font-weight: bold;
+    text-decoration: none;
+}
+
+#blogs A:hover {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+#blogs .desc {
+    color: #787878;
+    display: block;
+    margin-top: 10px;
+}
+#blogs .article {
+    display: block;
+    margin-top: 10px;
+    margin-left: 64px;
+}
+#blogs  HR {
+    margin: 20px 0 20px 0;
+    color: #e0e0e0;
+    background-color: #e0e0e0;
+    height: 1px;
+    border: solid 0px;
+}
+#blogs IMG {
+    display: inline;
+    float: left;
+    margin-right: 15px;
+}
+
+#header>TABLE{
+    border: 1px;
+    height: 150px;
+    width: 950px
+}
+
+.social {
+    margin-top: 15px;
+}
+
+.social IMG{
+    border: 0px;
+}
+.social A {
+    margin-right: 5px;
+}
+
+.contact_links {
+    margin-top: 15px;
+}
+.content_links {
+    float: right;
+    margin-top: 32px
+}
+
+.content_links IMG {
+    border: solid 0px;
+    margin-right: 10px;
+}
+
+.nav {
+    font-size: 11px;
+    color: #919191;
+}
+.nav A{
+    color: #919191;
+    text-decoration: none;
+}
+
+.news A {
+    font-size: 12px;
+    margin-bottom: 20px;
+    display: block;
+    text-decoration: none;
+}
+.news {
+    margin-bottom: 40px;
+}
+.news A:hover{
+    text-decoration: underline;
+}
+
+#main H3 {
+    color: #363f30;
+    font-size: 18px;
+    font-weight: normal;
+    margin-bottom: 20px;
+}
+
+div.w60
+{
+    margin-bottom: 20px;
+}
+
+div.box-c
+{
+    height:10px;
+    margin: 0 9px;
+    position: relative;
+    background: #2396bc;
+}
+
+div.box-c em b
+{
+    position:absolute;
+    font:100px Arial;
+    line-height:40px;
+    font-weight:normal;
+}
+
+.ctl, .cbl, .ctr, .cbr
+{
+    z-index:11;
+    width:9px;
+    height:20px;
+    color:#2396bc;
+    overflow:hidden;
+    position:absolute;
+    background:transparent;
+
+}
+
+
+.ctl {top:-7px; left:-9px;}
+.cbl {bottom:0; left:-9px;}
+.ctr {right: -9px; top: -7px;}
+.cbr {bottom: -7px; right: -9px;}
+
+.ctl b {left:-5px; color: #b8dbe6}
+.ctr b {left:-21px;}
+.cbl b {left: -6px; top: -11px; color: #b8dbe6}
+.cbr b {left: -21px; top: -18px;}
+
+div.box-inner
+{
+    background: #2396bc url(http://poit.everymove.ru/images/quote_bg.png) repeat-y;
+    color: #fff;
+    font-style: italic;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 15px 10px 15px 20px;
+}
+
+ul.style1 {
+    color: #6f736c;
+    margin-bottom: 20px;
+}
+UL.style1 LI {
+    text-align: justify;
+    margin-bottom: 10px;
+    list-style-image: url(http://poit.everymove.ru/images/li_img.png);
+}
+
+
+.num {
+    font-size: 100px;
+    margin: 0px;
+    padding: 0px;
+}
+H3.num {
+    padding-top: 15px;
+    clear: both;
+    border: solid 0px red;
+    background: url(http://poit.everymove.ru/images/blue_circle_bg.png) no-repeat;
+    height: 51px;
+}
+H3.num>b {
+    margin-right: 20px;
+    border: solid 0px red;
+    width: 51px;
+    display: block;
+    float: left;
+    text-align: center;
+    color: #fff;
+    font-size: 30px;
+    font-weight: normal;
+    margin-top: -6px;
+
+
+}
+
+.btn .lc {
+    background: url(http://poit.everymove.ru/images/green_btn_lc.png) no-repeat;
+    height: 31px;
+    width: 7px;
+}
+.btn {
+    float: right;
+    margin-bottom: 20px;
+}
+.btn A {
+    color: #fff;
+    text-decoration: none;
+    padding: 5px;
+    font-style: italic;
+    font-size: 13px;
+
+}
+.btn .txt {
+
+    background: url(http://poit.everymove.ru/images/green_btn_txt_bg.png)
+}
+.btn .rc {
+    background: url(http://poit.everymove.ru/images/green_btn_rc.png) no-repeat right;
+    width: 16px;
+}
+
+.vote {
+    font-size: 14px;
+    margin-bottom: 40px;
+    width: 280px;
+}
+
+.vote .title{
+    display: block;
+    font-size: 18px;
+    margin-bottom: 15px;
+    color: #6b6b6b;
+}
+
+.vote input[type=radio] {
+    margin: 5px 10px 5px 20px;
+}
+
+.vote .btn {
+    float: none;
+}
+
+.vote .btn.normal {
+    float: left;
+    margin-right: 15px;
+}
+
+.btn.normal .ls {
+    background: url(http://poit.everymove.ru/images/normal_btn_ls.png) no-repeat;
+    width: 5px;
+    height: 31px;
+}
+.btn.normal .rs {
+    background: url(http://poit.everymove.ru/images/normal_btn_rs.png) no-repeat;
+    width: 5px;
+}
+.btn.normal .txt {
+    background: url(http://poit.everymove.ru/images/normal_btn_bg.png);
+}
+.btn .txt A
+{
+    color: #fff;
+    font-style: italic;
+    padding: 9px;
+    text-decoration: none;
+    font-size: 15px;
+}
+.btn.grey .ls {
+    background: url(http://poit.everymove.ru/images/grey_btn_ls.png) no-repeat;
+    width: 5px;
+    height: 31px;
+}
+.btn.grey .rs {
+    background: url(http://poit.everymove.ru/images/grey_btn_rs.png) no-repeat;
+    width: 5px;
+}
+.btn.grey .txt {
+    background: url(http://poit.everymove.ru/images/grey_btn_bg.png);
+}
+
+.success_str_box {
+    margin-bottom: 20px;
+    font-size: 12px;
+    width: 280px;
+}
+.success_str_box .blc {
+    background: url(http://poit.everymove.ru/images/succ_box_blc.png) no-repeat;
+    width: 19px;
+    height: 21px;
+}
+.success_str_box .brc {
+    background: url(http://poit.everymove.ru/images/succ_box_brc.png) no-repeat;
+    width: 19px;
+}
+.success_str_box .bs {
+    background: url(http://poit.everymove.ru/images/succ_box_border.png) repeat-x 0 19px;
+}
+.success_str_box .l_border {
+    background: url(http://poit.everymove.ru/images/succ_box_border.png) repeat-y;
+}
+.success_str_box .r_border {
+    background: url(http://poit.everymove.ru/images/succ_box_border.png) repeat-y 17px 0;
+}
+.success_str_box .rs {
+    background: url(http://poit.everymove.ru/images/succ_box_side.png) no-repeat 17px 0;
+    height: 179px;
+}
+.success_str_box .ls {
+    background: url(http://poit.everymove.ru/images/succ_box_side.png) no-repeat;
+}
+
+.success_str_box .name {
+    color: #6ba213;
+    margin-bottom: 20px;
+    display: block;
+    font-size: 14px;
+}
+
+.success_str_box .title {
+    color: #5b5b5b;
+    font-style: italic;
+    text-align:center;
+    font-size: 23px;
+    margin-bottom: 15px;
+}
+
+.success_str_box .desc {
+    display: block;
+    margin-bottom: 25px;
+}
+
+.success_str_box IMG {
+    float: left;
+}
+
+INPUT.search {
+    width: 200px;
+    color: #636363;
+    font-size: 12px;
+}
+
+#logo_img {
+    width: 200px;
+    padding-left: 10px;
+}
+
+#logo_img IMG {
+    border: solid 0px;
+}
+
+#logo_txt {
+    width: 330px;
+}
+
+#logo_txt .first {
+    color:#888888;
+    font-size:14px;
+    padding-bottom:15px;
+    width:310px;
+}
+
+#logo_txt .second {
+    border-top:1px solid #cacaca;
+    color:#A2A2A2;
+    font-size:12px;
+    padding-top:15px;
+    width:310px;
+}
+
+#logo_txt .second IMG {
+    position: absolute;
+}
+
+#logo_txt .second > DIV {
+    padding-left:50px;
+}
+
+.main_menu_hover {
+    display: none;
+    position: absolute;
+    margin-top: -20px;
+}
+
+.main_menu_hover .tlc {
+    width: 18px;
+    height: 14px;
+    background: url(mm_tlc00.png) no-repeat
+}
+
+.main_menu_hover .ts {
+    background: url(mm_ts000.png) repeat-x
+}
+
+.main_menu_hover .trc{
+    background: url(mm_trc00.png) no-repeat
+}
+
+.main_menu_hover .ls{
+    background: url(mm_ls000.png) repeat-y
+}
+
+.main_menu_hover .rs{
+    background: url(mm_rs000.png) repeat-y
+}
+
+.main_menu_hover .blc {
+    background: url(mm_blc00.png) no-repeat
+}
+
+.main_menu_hover .bs {
+    background: url(mm_bs000.png) repeat-x
+}
+
+.main_menu_hover .brc {
+    width: 19px;
+    height: 15px;
+    background: url(mm_brc00.png) no-repeat
+}
+
+.main_menu_hover .txt {
+    background-color: #7daf16;
+}
+.main_menu_hover .txt A {
+    color: #FFF !important;
+    font-family: Arial !important;
+    background: none !important;
+    padding: 0 0 0 0 !important;
+    text-decoration: underline !important;
+}
+
+.main_menu_hover .txt A:hover {
+    text-decoration: none !important;
+}
+
+.main_menu_hover .txt UL {
+    list-style: none;
+    padding-left: 0px;
+    margin: 0px;
+    width: 150px;
+}
+
+.main_menu_hover .txt UL LI {
+    margin: 5px 10px;
+    height: 25px !important;
+}
+
+.paging {
+    text-align: center
+}
+
+.paging a {
+    text-decoration: none;
+    font-family: Arial;
+    color: #363f30;
+    padding: 5px;
+}
+
+.paging a:hover {
+    background-color: #7daf16;
+    color: #fff;
+}
+
+.paging a.selected {
+    border: solid 1px #7daf16;
+}
+
+.all_news{
+    margin-bottom: 20px;
+}
+
+.all_news P {
+    clear: both;
+    color: #363f30;
+}
+
+.all_news .who {
+    color: #787878;
+    display: block;
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.all_news .who A:hover{
+    text-decoration: underline;
+}
+
+.all_news .name {
+    color: #69A011;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.pochet {
+
+    border: 1px;
+}
+
+.pochet .info A {
+    text-decoration: none;
+    display: block;
+    color: #69a011;
+    font-size: 20px;
+}
+
+.pochet .info SPAN {
+    color: #7f7f7f;
+    font-size: 12px;
+}
+
+.pochet .info TD {
+    text-align: center;
+    padding: 10px 0px 20px 0px;
+}
+
+.pochet .foto TD {
+    text-align: center;
+    background: url('http://poit.everymove.ru/images/border_pochet.png') no-repeat center center;
+    height: 197px;
+    width: 186px;
+}
+
+.vacancy_title SPAN {
+    color: grey;
+}
+.vacancy_title A {
+    text-decoration: none;
+}
+.vacancy_title A:hover {
+    text-decoration: underline;
+}
+.vacancy_title {
+    margin-bottom: 5px;
+}
+.vacancy_title, .vacancy_description {
+    font-size: 13px;
+}
+.vacancy_description {
+    margin-bottom: 20px;
+}
+
+.table TH {
+
+    background-color: #edf6df;
+    padding: 10px;
+    border-left: solid 1px #ebebeb;
+
+}
+
+.table {
+    width: 560px;
+    border-top: solid 1px #ebebeb;
+    border-right: solid 1px #ebebeb;
+    border-bottom: solid 1px #ebebeb;
+    font-size: 12px;
+    text-align: center;
+    color: #6b6b6b;
+    margin-bottom: 20px;
+}
+
+.table TR>TD:first-child {
+    font-weight:bold;
+}
+
+.table TR>TD {
+    padding: 10px;
+    border-left: solid 1px #ebebeb;
+}
+
+.table tr:nth-child(2n+1) {
+    background-color: #f6f6f6;
+}
+
+.line {
+    padding-bottom: 40px;
+}
+
+.line .left {
+    float: left;
+    width: 275px;
+}
+
+.line .right {
+    float: right;
+    width: 275px;
+}
+
+.line .book_cover {
+    float: left;
+    margin-right: 10px;
+    margin-bottom: 20px;
+}
+
+.line {
+    font-size: 12px;
+}
+
+.line SPAN {
+    color: #969696;
+}
+
+.line A {
+    display: block;
+    text-decoration: none;
+}
+.line A:hover{
+    display: block;
+    text-decoration: underline;
+}
+
+.book_category{
+    color: #363f30;
+    font-size: 18px;
+    font-weight: normal;
+    margin-bottom: 20px;
+    text-decoration: none;
+}
+
+.book_category:hover{
+    color: #363f30;
+    font-size: 18px;
+    font-weight: normal;
+    margin-bottom: 20px;
+    text-decoration: underline;
+}
+
+.photos_all {
+    width: 560px;
+    font-size: 12px;
+}
+
+.photos_all .big {
+    width: 210px;
+    height: 146px;
+    background: url('http://poit.everymove.ru/images/border_photos_all.png') no-repeat;
+    text-align: center;
+}
+
+.photos_all .small DIV {
+    background: url('http://poit.everymove.ru/images/border_small_photos_all.png') no-repeat;
+    width: 72px;
+    height: 73px;
+    float: left;
+    margin-left: 12px;
+    padding-top: 3px;
+    text-align: center;
+}
+
+.photos_all .small  {
+    height: 80px;
+}
+
+.photos_all .title A {
+    margin: 10px;
+
+}
