@@ -702,7 +702,8 @@ EOF;
             if ($keyDay != $todayWeekDay)
                 continue;
         }
-        $dayName = array_values($day)[0]['weekDay'];
+        $temp = array_values($day)
+        $dayName = $temp[0]['weekDay'];
         echo <<<EOD
         <div class="br">
         </div>
@@ -764,7 +765,8 @@ EOF;
         if ($keyDay != $todayWeekDay)
             continue;
         
-        $dayName = array_values($day)[0]['weekDay'];
+        $temp = array_values($day)
+        $dayName = $temp[0]['weekDay'];
         echo <<<EOD
         <div class="br">
         </div>
