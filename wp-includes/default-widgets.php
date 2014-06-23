@@ -6,6 +6,94 @@
  * @subpackage Widgets
  */
 
+
+/**
+ * Adds Schedule_Widget widget.
+ */
+class Schedule_Widget extends WP_Widget {
+
+	/**
+	 * Register widget with WordPress.
+	 */
+	function __construct() {
+		parent::__construct(
+			'Schedule_Widget', // Base ID
+			__('Widget Title', 'text_domain'), // Name
+			array( 'description' => __( 'FKSiS Schedule Widget', 'text_domain' ), ) // Args
+			);
+	}
+
+	/**
+	 * Front-end display of widget.
+	 *
+	 * @see WP_Widget::widget()
+	 *
+	 * @param array $args     Widget arguments.
+	 * @param array $instance Saved values from database.
+	 */
+	public function widget( $args, $instance ) {
+		$group = isset($_COOKIE['groupNumber']) ? prepareGroupSch($_COOKIE['groupNumber']) : 'Расписание';
+		$title = apply_filters( 'widget_title', $group );
+
+		echo $args['before_widget'];
+		if ( ! empty( $title ) )
+			echo $args['before_title'] . $title . $args['after_title'];
+		?>
+		<div class="item" style='padding-bottom: 10px;'> 
+			<div class="text">
+				<?php 
+				$hasOutput = printShortTodayGroupSchedule($group);
+				if (!$hasOutput) {
+					echo "<span>" . __( 'Занятий на сегодня в расписании не найдено.', 'text_domain' ) . "</span>";
+				}
+				?>
+			</div>
+		</div>
+		<?php  
+		echo $args['after_widget'];
+	}
+
+	/**
+	* Back-end widget form.
+	*
+	* @see WP_Widget::form()
+	*
+	* @param array $instance Previously saved values from database.
+	*/
+	public function form( $instance ) {
+	/*if ( isset( $instance[ 'title' ] ) ) {
+	$title = $instance[ 'title' ];
+}
+else {
+$title = __( 'New title', 'text_domain' );
+}
+?>
+<p>
+	<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label> 
+	<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>">
+</p>
+<?php */
+}
+
+	/**
+	 * Sanitize widget form values as they are saved.
+	 *
+	 * @see WP_Widget::update()
+	 *
+	 * @param array $new_instance Values just sent to be saved.
+	 * @param array $old_instance Previously saved values from database.
+	 *
+	 * @return array Updated safe values to be saved.
+	 */
+	public function update( $new_instance, $old_instance ) {
+		$instance = array();
+		$instance['title'] = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
+
+		return $instance;
+	}
+
+} // class Schedule_Widget
+
 /**
  * Pages widget class
  *
@@ -52,17 +140,17 @@ class WP_Widget_Pages extends WP_Widget {
 			'echo'        => 0,
 			'sort_column' => $sortby,
 			'exclude'     => $exclude
-		) ) );
+			) ) );
 
 		if ( !empty( $out ) ) {
 			echo $before_widget;
 			if ( $title)
 				echo $before_title . $title . $after_title;
-		?>
-		<ul>
-			<?php echo $out; ?>
-		</ul>
-		<?php
+			?>
+			<ul>
+				<?php echo $out; ?>
+			</ul>
+			<?php
 			echo $after_widget;
 		}
 	}
@@ -86,7 +174,7 @@ class WP_Widget_Pages extends WP_Widget {
 		$instance = wp_parse_args( (array) $instance, array( 'sortby' => 'post_title', 'title' => '', 'exclude' => '') );
 		$title = esc_attr( $instance['title'] );
 		$exclude = esc_attr( $instance['exclude'] );
-	?>
+		?>
 		<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?></label> <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $title; ?>" /></p>
 		<p>
 			<label for="<?php echo $this->get_field_id('sortby'); ?>"><?php _e( 'Sort by:' ); ?></label>
@@ -101,7 +189,7 @@ class WP_Widget_Pages extends WP_Widget {
 			<br />
 			<small><?php _e( 'Page IDs, separated by commas.' ); ?></small>
 		</p>
-<?php
+		<?php
 	}
 
 }
@@ -149,7 +237,7 @@ class WP_Widget_Links extends WP_Widget {
 			'category' => $category, 'class' => 'linkcat widget',
 			'orderby' => $orderby, 'order' => $order,
 			'limit' => $limit,
-		) ) );
+			) ) );
 	}
 
 	function update( $new_instance, $old_instance ) {
@@ -177,42 +265,42 @@ class WP_Widget_Links extends WP_Widget {
 		$link_cats = get_terms( 'link_category' );
 		if ( ! $limit = intval( $instance['limit'] ) )
 			$limit = -1;
-?>
-		<p>
-		<label for="<?php echo $this->get_field_id('category'); ?>"><?php _e( 'Select Link Category:' ); ?></label>
-		<select class="widefat" id="<?php echo $this->get_field_id('category'); ?>" name="<?php echo $this->get_field_name('category'); ?>">
-		<option value=""><?php _ex('All Links', 'links widget'); ?></option>
-		<?php
-		foreach ( $link_cats as $link_cat ) {
-			echo '<option value="' . intval( $link_cat->term_id ) . '"'
-				. selected( $instance['category'], $link_cat->term_id, false )
-				. '>' . $link_cat->name . "</option>\n";
-		}
 		?>
-		</select>
-		<label for="<?php echo $this->get_field_id('orderby'); ?>"><?php _e( 'Sort by:' ); ?></label>
-		<select name="<?php echo $this->get_field_name('orderby'); ?>" id="<?php echo $this->get_field_id('orderby'); ?>" class="widefat">
-			<option value="name"<?php selected( $instance['orderby'], 'name' ); ?>><?php _e( 'Link title' ); ?></option>
-			<option value="rating"<?php selected( $instance['orderby'], 'rating' ); ?>><?php _e( 'Link rating' ); ?></option>
-			<option value="id"<?php selected( $instance['orderby'], 'id' ); ?>><?php _e( 'Link ID' ); ?></option>
-			<option value="rand"<?php selected( $instance['orderby'], 'rand' ); ?>><?php _ex( 'Random', 'Links widget' ); ?></option>
-		</select>
+		<p>
+			<label for="<?php echo $this->get_field_id('category'); ?>"><?php _e( 'Select Link Category:' ); ?></label>
+			<select class="widefat" id="<?php echo $this->get_field_id('category'); ?>" name="<?php echo $this->get_field_name('category'); ?>">
+				<option value=""><?php _ex('All Links', 'links widget'); ?></option>
+				<?php
+				foreach ( $link_cats as $link_cat ) {
+					echo '<option value="' . intval( $link_cat->term_id ) . '"'
+					. selected( $instance['category'], $link_cat->term_id, false )
+					. '>' . $link_cat->name . "</option>\n";
+				}
+				?>
+			</select>
+			<label for="<?php echo $this->get_field_id('orderby'); ?>"><?php _e( 'Sort by:' ); ?></label>
+			<select name="<?php echo $this->get_field_name('orderby'); ?>" id="<?php echo $this->get_field_id('orderby'); ?>" class="widefat">
+				<option value="name"<?php selected( $instance['orderby'], 'name' ); ?>><?php _e( 'Link title' ); ?></option>
+				<option value="rating"<?php selected( $instance['orderby'], 'rating' ); ?>><?php _e( 'Link rating' ); ?></option>
+				<option value="id"<?php selected( $instance['orderby'], 'id' ); ?>><?php _e( 'Link ID' ); ?></option>
+				<option value="rand"<?php selected( $instance['orderby'], 'rand' ); ?>><?php _ex( 'Random', 'Links widget' ); ?></option>
+			</select>
 		</p>
 		<p>
-		<input class="checkbox" type="checkbox" <?php checked($instance['images'], true) ?> id="<?php echo $this->get_field_id('images'); ?>" name="<?php echo $this->get_field_name('images'); ?>" />
-		<label for="<?php echo $this->get_field_id('images'); ?>"><?php _e('Show Link Image'); ?></label><br />
-		<input class="checkbox" type="checkbox" <?php checked($instance['name'], true) ?> id="<?php echo $this->get_field_id('name'); ?>" name="<?php echo $this->get_field_name('name'); ?>" />
-		<label for="<?php echo $this->get_field_id('name'); ?>"><?php _e('Show Link Name'); ?></label><br />
-		<input class="checkbox" type="checkbox" <?php checked($instance['description'], true) ?> id="<?php echo $this->get_field_id('description'); ?>" name="<?php echo $this->get_field_name('description'); ?>" />
-		<label for="<?php echo $this->get_field_id('description'); ?>"><?php _e('Show Link Description'); ?></label><br />
-		<input class="checkbox" type="checkbox" <?php checked($instance['rating'], true) ?> id="<?php echo $this->get_field_id('rating'); ?>" name="<?php echo $this->get_field_name('rating'); ?>" />
-		<label for="<?php echo $this->get_field_id('rating'); ?>"><?php _e('Show Link Rating'); ?></label>
+			<input class="checkbox" type="checkbox" <?php checked($instance['images'], true) ?> id="<?php echo $this->get_field_id('images'); ?>" name="<?php echo $this->get_field_name('images'); ?>" />
+			<label for="<?php echo $this->get_field_id('images'); ?>"><?php _e('Show Link Image'); ?></label><br />
+			<input class="checkbox" type="checkbox" <?php checked($instance['name'], true) ?> id="<?php echo $this->get_field_id('name'); ?>" name="<?php echo $this->get_field_name('name'); ?>" />
+			<label for="<?php echo $this->get_field_id('name'); ?>"><?php _e('Show Link Name'); ?></label><br />
+			<input class="checkbox" type="checkbox" <?php checked($instance['description'], true) ?> id="<?php echo $this->get_field_id('description'); ?>" name="<?php echo $this->get_field_name('description'); ?>" />
+			<label for="<?php echo $this->get_field_id('description'); ?>"><?php _e('Show Link Description'); ?></label><br />
+			<input class="checkbox" type="checkbox" <?php checked($instance['rating'], true) ?> id="<?php echo $this->get_field_id('rating'); ?>" name="<?php echo $this->get_field_name('rating'); ?>" />
+			<label for="<?php echo $this->get_field_id('rating'); ?>"><?php _e('Show Link Rating'); ?></label>
 		</p>
 		<p>
-		<label for="<?php echo $this->get_field_id('limit'); ?>"><?php _e( 'Number of links to show:' ); ?></label>
-		<input id="<?php echo $this->get_field_id('limit'); ?>" name="<?php echo $this->get_field_name('limit'); ?>" type="text" value="<?php echo $limit == -1 ? '' : intval( $limit ); ?>" size="3" />
+			<label for="<?php echo $this->get_field_id('limit'); ?>"><?php _e( 'Number of links to show:' ); ?></label>
+			<input id="<?php echo $this->get_field_id('limit'); ?>" name="<?php echo $this->get_field_name('limit'); ?>" type="text" value="<?php echo $limit == -1 ? '' : intval( $limit ); ?>" size="3" />
 		</p>
-<?php
+		<?php
 	}
 }
 
@@ -247,9 +335,9 @@ class WP_Widget_Search extends WP_Widget {
 	function form( $instance ) {
 		$instance = wp_parse_args( (array) $instance, array( 'title' => '') );
 		$title = $instance['title'];
-?>
+		?>
 		<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?> <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>" /></label></p>
-<?php
+		<?php
 	}
 
 	function update( $new_instance, $old_instance ) {
@@ -286,11 +374,11 @@ class WP_Widget_Archives extends WP_Widget {
 			echo $before_title . $title . $after_title;
 
 		if ( $d ) {
-?>
-		<select name="archive-dropdown" onchange='document.location.href=this.options[this.selectedIndex].value;'>
-			<option value=""><?php echo esc_attr( __( 'Select Month' ) ); ?></option>
+			?>
+			<select name="archive-dropdown" onchange='document.location.href=this.options[this.selectedIndex].value;'>
+				<option value=""><?php echo esc_attr( __( 'Select Month' ) ); ?></option>
 
-			<?php
+				<?php
 			/**
 			 * Filter the arguments for the Archives widget drop-down.
 			 *
@@ -304,14 +392,14 @@ class WP_Widget_Archives extends WP_Widget {
 				'type'            => 'monthly',
 				'format'          => 'option',
 				'show_post_count' => $c
-			) ) );
-?>
-		</select>
-<?php
+				) ) );
+				?>
+			</select>
+			<?php
 		} else {
-?>
-		<ul>
-<?php
+			?>
+			<ul>
+				<?php
 		/**
 		 * Filter the arguments for the Archives widget.
 		 *
@@ -324,39 +412,39 @@ class WP_Widget_Archives extends WP_Widget {
 		wp_get_archives( apply_filters( 'widget_archives_args', array(
 			'type'            => 'monthly',
 			'show_post_count' => $c
-		) ) );
-?>
+			) ) );
+			?>
 		</ul>
-<?php
-		}
-
-		echo $after_widget;
+		<?php
 	}
 
-	function update( $new_instance, $old_instance ) {
-		$instance = $old_instance;
-		$new_instance = wp_parse_args( (array) $new_instance, array( 'title' => '', 'count' => 0, 'dropdown' => '') );
-		$instance['title'] = strip_tags($new_instance['title']);
-		$instance['count'] = $new_instance['count'] ? 1 : 0;
-		$instance['dropdown'] = $new_instance['dropdown'] ? 1 : 0;
+	echo $after_widget;
+}
 
-		return $instance;
-	}
+function update( $new_instance, $old_instance ) {
+	$instance = $old_instance;
+	$new_instance = wp_parse_args( (array) $new_instance, array( 'title' => '', 'count' => 0, 'dropdown' => '') );
+	$instance['title'] = strip_tags($new_instance['title']);
+	$instance['count'] = $new_instance['count'] ? 1 : 0;
+	$instance['dropdown'] = $new_instance['dropdown'] ? 1 : 0;
 
-	function form( $instance ) {
-		$instance = wp_parse_args( (array) $instance, array( 'title' => '', 'count' => 0, 'dropdown' => '') );
-		$title = strip_tags($instance['title']);
-		$count = $instance['count'] ? 'checked="checked"' : '';
-		$dropdown = $instance['dropdown'] ? 'checked="checked"' : '';
-?>
-		<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?></label> <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>" /></p>
-		<p>
-			<input class="checkbox" type="checkbox" <?php echo $dropdown; ?> id="<?php echo $this->get_field_id('dropdown'); ?>" name="<?php echo $this->get_field_name('dropdown'); ?>" /> <label for="<?php echo $this->get_field_id('dropdown'); ?>"><?php _e('Display as dropdown'); ?></label>
-			<br/>
-			<input class="checkbox" type="checkbox" <?php echo $count; ?> id="<?php echo $this->get_field_id('count'); ?>" name="<?php echo $this->get_field_name('count'); ?>" /> <label for="<?php echo $this->get_field_id('count'); ?>"><?php _e('Show post counts'); ?></label>
-		</p>
-<?php
-	}
+	return $instance;
+}
+
+function form( $instance ) {
+	$instance = wp_parse_args( (array) $instance, array( 'title' => '', 'count' => 0, 'dropdown' => '') );
+	$title = strip_tags($instance['title']);
+	$count = $instance['count'] ? 'checked="checked"' : '';
+	$dropdown = $instance['dropdown'] ? 'checked="checked"' : '';
+	?>
+	<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?></label> <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>" /></p>
+	<p>
+		<input class="checkbox" type="checkbox" <?php echo $dropdown; ?> id="<?php echo $this->get_field_id('dropdown'); ?>" name="<?php echo $this->get_field_name('dropdown'); ?>" /> <label for="<?php echo $this->get_field_id('dropdown'); ?>"><?php _e('Display as dropdown'); ?></label>
+		<br/>
+		<input class="checkbox" type="checkbox" <?php echo $count; ?> id="<?php echo $this->get_field_id('count'); ?>" name="<?php echo $this->get_field_name('count'); ?>" /> <label for="<?php echo $this->get_field_id('count'); ?>"><?php _e('Show post counts'); ?></label>
+	</p>
+	<?php
+}
 }
 
 /**
@@ -382,13 +470,13 @@ class WP_Widget_Meta extends WP_Widget {
 		echo $before_widget;
 		if ( $title )
 			echo $before_title . $title . $after_title;
-?>
-			<ul>
+		?>
+		<ul>
 			<?php wp_register(); ?>
 			<li><?php wp_loginout(); ?></li>
 			<li><a href="<?php bloginfo('rss2_url'); ?>" title="<?php echo esc_attr(__('Syndicate this site using RSS 2.0')); ?>"><?php _e('Entries <abbr title="Really Simple Syndication">RSS</abbr>'); ?></a></li>
 			<li><a href="<?php bloginfo('comments_rss2_url'); ?>" title="<?php echo esc_attr(__('The latest comments to all posts in RSS')); ?>"><?php _e('Comments <abbr title="Really Simple Syndication">RSS</abbr>'); ?></a></li>
-<?php
+			<?php
 			/**
 			 * Filter the "Powered by WordPress" text in the Meta widget.
 			 *
@@ -400,12 +488,12 @@ class WP_Widget_Meta extends WP_Widget {
 				esc_url( __( 'https://wordpress.org/' ) ),
 				esc_attr__( 'Powered by WordPress, state-of-the-art semantic personal publishing platform.' ),
 				_x( 'WordPress.org', 'meta widget link text' )
-			) );
+				) );
 
 			wp_meta();
-?>
-			</ul>
-<?php
+			?>
+		</ul>
+		<?php
 		echo $after_widget;
 	}
 
@@ -419,9 +507,9 @@ class WP_Widget_Meta extends WP_Widget {
 	function form( $instance ) {
 		$instance = wp_parse_args( (array) $instance, array( 'title' => '' ) );
 		$title = strip_tags($instance['title']);
-?>
-			<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?></label> <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>" /></p>
-<?php
+		?>
+		<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?></label> <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>" /></p>
+		<?php
 	}
 }
 
@@ -462,12 +550,12 @@ class WP_Widget_Calendar extends WP_Widget {
 	function form( $instance ) {
 		$instance = wp_parse_args( (array) $instance, array( 'title' => '' ) );
 		$title = strip_tags($instance['title']);
-?>
+		?>
 		<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?></label>
-		<input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>" /></p>
-<?php
+			<input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>" /></p>
+			<?php
+		}
 	}
-}
 
 /**
  * Text widget class
@@ -499,7 +587,7 @@ class WP_Widget_Text extends WP_Widget {
 		$text = apply_filters( 'widget_text', empty( $instance['text'] ) ? '' : $instance['text'], $instance );
 		echo $before_widget;
 		if ( !empty( $title ) ) { echo $before_title . $title . $after_title; } ?>
-			<div class="textwidget"><?php echo !empty( $instance['filter'] ) ? wpautop( $text ) : $text; ?></div>
+		<div class="textwidget"><?php echo !empty( $instance['filter'] ) ? wpautop( $text ) : $text; ?></div>
 		<?php
 		echo $after_widget;
 	}
@@ -519,16 +607,16 @@ class WP_Widget_Text extends WP_Widget {
 		$instance = wp_parse_args( (array) $instance, array( 'title' => '', 'text' => '' ) );
 		$title = strip_tags($instance['title']);
 		$text = esc_textarea($instance['text']);
-?>
+		?>
 		<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?></label>
-		<input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>" /></p>
+			<input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>" /></p>
 
-		<textarea class="widefat" rows="16" cols="20" id="<?php echo $this->get_field_id('text'); ?>" name="<?php echo $this->get_field_name('text'); ?>"><?php echo $text; ?></textarea>
+			<textarea class="widefat" rows="16" cols="20" id="<?php echo $this->get_field_id('text'); ?>" name="<?php echo $this->get_field_name('text'); ?>"><?php echo $text; ?></textarea>
 
-		<p><input id="<?php echo $this->get_field_id('filter'); ?>" name="<?php echo $this->get_field_name('filter'); ?>" type="checkbox" <?php checked(isset($instance['filter']) ? $instance['filter'] : 0); ?> />&nbsp;<label for="<?php echo $this->get_field_id('filter'); ?>"><?php _e('Automatically add paragraphs'); ?></label></p>
-<?php
+			<p><input id="<?php echo $this->get_field_id('filter'); ?>" name="<?php echo $this->get_field_name('filter'); ?>" type="checkbox" <?php checked(isset($instance['filter']) ? $instance['filter'] : 0); ?> />&nbsp;<label for="<?php echo $this->get_field_id('filter'); ?>"><?php _e('Automatically add paragraphs'); ?></label></p>
+			<?php
+		}
 	}
-}
 
 /**
  * Categories widget class
@@ -571,26 +659,26 @@ class WP_Widget_Categories extends WP_Widget {
 			 * @param array $cat_args An array of Categories widget drop-down arguments.
 			 */
 			wp_dropdown_categories( apply_filters( 'widget_categories_dropdown_args', $cat_args ) );
-?>
+			?>
 
-<script type='text/javascript'>
-/* <![CDATA[ */
-	var dropdown = document.getElementById("cat");
-	function onCatChange() {
-		if ( dropdown.options[dropdown.selectedIndex].value > 0 ) {
-			location.href = "<?php echo home_url(); ?>/?cat="+dropdown.options[dropdown.selectedIndex].value;
-		}
-	}
-	dropdown.onchange = onCatChange;
-/* ]]> */
-</script>
+			<script type='text/javascript'>
+			/* <![CDATA[ */
+			var dropdown = document.getElementById("cat");
+			function onCatChange() {
+				if ( dropdown.options[dropdown.selectedIndex].value > 0 ) {
+					location.href = "<?php echo home_url(); ?>/?cat="+dropdown.options[dropdown.selectedIndex].value;
+				}
+			}
+			dropdown.onchange = onCatChange;
+			/* ]]> */
+			</script>
 
-<?php
+			<?php
 		} else {
-?>
-		<ul>
-<?php
-		$cat_args['title_li'] = '';
+			?>
+			<ul>
+				<?php
+				$cat_args['title_li'] = '';
 
 		/**
 		 * Filter the arguments for the Categories widget.
@@ -600,47 +688,47 @@ class WP_Widget_Categories extends WP_Widget {
 		 * @param array $cat_args An array of Categories widget options.
 		 */
 		wp_list_categories( apply_filters( 'widget_categories_args', $cat_args ) );
-?>
-		</ul>
-<?php
-		}
+		?>
+	</ul>
+	<?php
+}
 
-		echo $after_widget;
-	}
+echo $after_widget;
+}
 
-	function update( $new_instance, $old_instance ) {
-		$instance = $old_instance;
-		$instance['title'] = strip_tags($new_instance['title']);
-		$instance['count'] = !empty($new_instance['count']) ? 1 : 0;
-		$instance['hierarchical'] = !empty($new_instance['hierarchical']) ? 1 : 0;
-		$instance['dropdown'] = !empty($new_instance['dropdown']) ? 1 : 0;
+function update( $new_instance, $old_instance ) {
+	$instance = $old_instance;
+	$instance['title'] = strip_tags($new_instance['title']);
+	$instance['count'] = !empty($new_instance['count']) ? 1 : 0;
+	$instance['hierarchical'] = !empty($new_instance['hierarchical']) ? 1 : 0;
+	$instance['dropdown'] = !empty($new_instance['dropdown']) ? 1 : 0;
 
-		return $instance;
-	}
+	return $instance;
+}
 
-	function form( $instance ) {
+function form( $instance ) {
 		//Defaults
-		$instance = wp_parse_args( (array) $instance, array( 'title' => '') );
-		$title = esc_attr( $instance['title'] );
-		$count = isset($instance['count']) ? (bool) $instance['count'] :false;
-		$hierarchical = isset( $instance['hierarchical'] ) ? (bool) $instance['hierarchical'] : false;
-		$dropdown = isset( $instance['dropdown'] ) ? (bool) $instance['dropdown'] : false;
-?>
-		<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e( 'Title:' ); ?></label>
+	$instance = wp_parse_args( (array) $instance, array( 'title' => '') );
+	$title = esc_attr( $instance['title'] );
+	$count = isset($instance['count']) ? (bool) $instance['count'] :false;
+	$hierarchical = isset( $instance['hierarchical'] ) ? (bool) $instance['hierarchical'] : false;
+	$dropdown = isset( $instance['dropdown'] ) ? (bool) $instance['dropdown'] : false;
+	?>
+	<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e( 'Title:' ); ?></label>
 		<input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $title; ?>" /></p>
 
 		<p><input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id('dropdown'); ?>" name="<?php echo $this->get_field_name('dropdown'); ?>"<?php checked( $dropdown ); ?> />
-		<label for="<?php echo $this->get_field_id('dropdown'); ?>"><?php _e( 'Display as dropdown' ); ?></label><br />
+			<label for="<?php echo $this->get_field_id('dropdown'); ?>"><?php _e( 'Display as dropdown' ); ?></label><br />
 
-		<input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id('count'); ?>" name="<?php echo $this->get_field_name('count'); ?>"<?php checked( $count ); ?> />
-		<label for="<?php echo $this->get_field_id('count'); ?>"><?php _e( 'Show post counts' ); ?></label><br />
+			<input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id('count'); ?>" name="<?php echo $this->get_field_name('count'); ?>"<?php checked( $count ); ?> />
+			<label for="<?php echo $this->get_field_id('count'); ?>"><?php _e( 'Show post counts' ); ?></label><br />
 
-		<input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id('hierarchical'); ?>" name="<?php echo $this->get_field_name('hierarchical'); ?>"<?php checked( $hierarchical ); ?> />
-		<label for="<?php echo $this->get_field_id('hierarchical'); ?>"><?php _e( 'Show hierarchy' ); ?></label></p>
-<?php
+			<input type="checkbox" class="checkbox" id="<?php echo $this->get_field_id('hierarchical'); ?>" name="<?php echo $this->get_field_name('hierarchical'); ?>"<?php checked( $hierarchical ); ?> />
+			<label for="<?php echo $this->get_field_id('hierarchical'); ?>"><?php _e( 'Show hierarchy' ); ?></label></p>
+			<?php
+		}
+
 	}
-
-}
 
 /**
  * Recent_Posts widget class
@@ -705,71 +793,72 @@ class WP_Widget_Recent_Posts extends WP_Widget {
 			'no_found_rows'       => true,
 			'post_status'         => 'publish',
 			'ignore_sticky_posts' => true
-		) ) );
+			) ) );
 
 		if ($r->have_posts()) :
-?>
+			?>
 		<?php echo $before_widget; ?>
 		<?php if ( $title ) echo $before_title . $title . $after_title; ?>
-		<ul>
 		<?php while ( $r->have_posts() ) : $r->the_post(); ?>
-			<li>
-				<a href="<?php the_permalink(); ?>"><?php get_the_title() ? the_title() : the_ID(); ?></a>
-			<?php if ( $show_date ) : ?>
-				<span class="post-date"><?php echo get_the_date(); ?></span>
+
+		<div class="item">
+			<div class="text">
+				<a class="link" href="<?php the_permalink(); ?>" title="<?php get_the_title() ? the_title() : the_ID(); ?>"><?php get_the_title() ? the_title() : the_ID(); ?></a>
+				<?php if ( $show_date ) : ?>
+				<div class="author"><span class="post-date">Дата: </span><?php echo get_the_date(); ?></div>
 			<?php endif; ?>
-			</li>
-		<?php endwhile; ?>
-		</ul>
-		<?php echo $after_widget; ?>
+		</div>
+	</div>
+<?php endwhile; ?>
+<?php echo $after_widget; ?>
 <?php
 		// Reset the global $the_post as this query will have stomped on it
-		wp_reset_postdata();
+wp_reset_postdata();
 
-		endif;
+endif;
 
-		if ( ! $this->is_preview() ) {
-			$cache[ $args['widget_id'] ] = ob_get_flush();
-			wp_cache_set( 'widget_recent_posts', $cache, 'widget' );
-		} else {
-			ob_end_flush();
-		}
-	}
+if ( ! $this->is_preview() ) {
+	$cache[ $args['widget_id'] ] = ob_get_flush();
+	wp_cache_set( 'widget_recent_posts', $cache, 'widget' );
+} else {
+	ob_end_flush();
+}
+}
 
-	function update( $new_instance, $old_instance ) {
-		$instance = $old_instance;
-		$instance['title'] = strip_tags($new_instance['title']);
-		$instance['number'] = (int) $new_instance['number'];
-		$instance['show_date'] = isset( $new_instance['show_date'] ) ? (bool) $new_instance['show_date'] : false;
-		$this->flush_widget_cache();
+function update( $new_instance, $old_instance ) {
+	$instance = $old_instance;
+	$instance['title'] = strip_tags($new_instance['title']);
+	$instance['number'] = (int) $new_instance['number'];
+	$instance['show_date'] = isset( $new_instance['show_date'] ) ? (bool) $new_instance['show_date'] : false;
+	$this->flush_widget_cache();
 
-		$alloptions = wp_cache_get( 'alloptions', 'options' );
-		if ( isset($alloptions['widget_recent_entries']) )
-			delete_option('widget_recent_entries');
+	$alloptions = wp_cache_get( 'alloptions', 'options' );
+	if ( isset($alloptions['widget_recent_entries']) )
+		delete_option('widget_recent_entries');
 
-		return $instance;
-	}
+	return $instance;
+}
 
-	function flush_widget_cache() {
-		wp_cache_delete('widget_recent_posts', 'widget');
-	}
+function flush_widget_cache() {
+	wp_cache_delete('widget_recent_posts', 'widget');
+}
 
-	function form( $instance ) {
-		$title     = isset( $instance['title'] ) ? esc_attr( $instance['title'] ) : '';
-		$number    = isset( $instance['number'] ) ? absint( $instance['number'] ) : 5;
-		$show_date = isset( $instance['show_date'] ) ? (bool) $instance['show_date'] : false;
-?>
-		<p><label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label>
+function form( $instance ) {
+	$title     = isset( $instance['title'] ) ? esc_attr( $instance['title'] ) : '';
+	$number    = isset( $instance['number'] ) ? absint( $instance['number'] ) : 5;
+	$show_date = isset( $instance['show_date'] ) ? (bool) $instance['show_date'] : false;
+	?>
+	<p><label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label>
 		<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo $title; ?>" /></p>
 
 		<p><label for="<?php echo $this->get_field_id( 'number' ); ?>"><?php _e( 'Number of posts to show:' ); ?></label>
-		<input id="<?php echo $this->get_field_id( 'number' ); ?>" name="<?php echo $this->get_field_name( 'number' ); ?>" type="text" value="<?php echo $number; ?>" size="3" /></p>
+			<input id="<?php echo $this->get_field_id( 'number' ); ?>" name="<?php echo $this->get_field_name( 'number' ); ?>" type="text" value="<?php echo $number; ?>" size="3" /></p>
 
-		<p><input class="checkbox" type="checkbox" <?php checked( $show_date ); ?> id="<?php echo $this->get_field_id( 'show_date' ); ?>" name="<?php echo $this->get_field_name( 'show_date' ); ?>" />
-		<label for="<?php echo $this->get_field_id( 'show_date' ); ?>"><?php _e( 'Display post date?' ); ?></label></p>
-<?php
-	}
-}
+			<p><input class="checkbox" type="checkbox" <?php checked( $show_date ); ?> id="<?php echo $this->get_field_id( 'show_date' ); ?>" name="<?php echo $this->get_field_name( 'show_date' ); ?>" />
+				<label for="<?php echo $this->get_field_id( 'show_date' ); ?>"><?php _e( 'Display post date?' ); ?></label></p>
+				<?php
+			}
+		}
 
 /**
  * Recent_Comments widget class
@@ -803,10 +892,10 @@ class WP_Widget_Recent_Comments extends WP_Widget {
 		 */
 		if ( ! current_theme_supports( 'widgets' ) // Temp hack #14876
 			|| ! apply_filters( 'show_recent_comments_widget_style', true, $this->id_base ) )
-			return;
+		return;
 		?>
-	<style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style>
-<?php
+		<style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style>
+		<?php
 	}
 
 	function flush_widget_cache() {
@@ -857,7 +946,7 @@ class WP_Widget_Recent_Comments extends WP_Widget {
 			'number'      => $number,
 			'status'      => 'approve',
 			'post_status' => 'publish'
-		) ) );
+			) ) );
 
 		$output .= $before_widget;
 		if ( $title )
@@ -900,15 +989,15 @@ class WP_Widget_Recent_Comments extends WP_Widget {
 	function form( $instance ) {
 		$title  = isset( $instance['title'] ) ? esc_attr( $instance['title'] ) : '';
 		$number = isset( $instance['number'] ) ? absint( $instance['number'] ) : 5;
-?>
+		?>
 		<p><label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label>
-		<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo $title; ?>" /></p>
+			<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo $title; ?>" /></p>
 
-		<p><label for="<?php echo $this->get_field_id( 'number' ); ?>"><?php _e( 'Number of comments to show:' ); ?></label>
-		<input id="<?php echo $this->get_field_id( 'number' ); ?>" name="<?php echo $this->get_field_name( 'number' ); ?>" type="text" value="<?php echo $number; ?>" size="3" /></p>
-<?php
-	}
-}
+			<p><label for="<?php echo $this->get_field_id( 'number' ); ?>"><?php _e( 'Number of comments to show:' ); ?></label>
+				<input id="<?php echo $this->get_field_id( 'number' ); ?>" name="<?php echo $this->get_field_name( 'number' ); ?>" type="text" value="<?php echo $number; ?>" size="3" /></p>
+				<?php
+			}
+		}
 
 /**
  * RSS widget class
@@ -1127,40 +1216,40 @@ function wp_widget_rss_form( $args, $inputs = null ) {
 		echo '<p class="widget-error"><strong>' . sprintf( __('RSS Error: %s'), $error) . '</strong></p>';
 
 	if ( $inputs['url'] ) :
-?>
+		?>
 	<p><label for="rss-url-<?php echo $number; ?>"><?php _e('Enter the RSS feed URL here:'); ?></label>
-	<input class="widefat" id="rss-url-<?php echo $number; ?>" name="widget-rss[<?php echo $number; ?>][url]" type="text" value="<?php echo $url; ?>" /></p>
-<?php endif; if ( $inputs['title'] ) : ?>
+		<input class="widefat" id="rss-url-<?php echo $number; ?>" name="widget-rss[<?php echo $number; ?>][url]" type="text" value="<?php echo $url; ?>" /></p>
+	<?php endif; if ( $inputs['title'] ) : ?>
 	<p><label for="rss-title-<?php echo $number; ?>"><?php _e('Give the feed a title (optional):'); ?></label>
-	<input class="widefat" id="rss-title-<?php echo $number; ?>" name="widget-rss[<?php echo $number; ?>][title]" type="text" value="<?php echo $title; ?>" /></p>
-<?php endif; if ( $inputs['items'] ) : ?>
+		<input class="widefat" id="rss-title-<?php echo $number; ?>" name="widget-rss[<?php echo $number; ?>][title]" type="text" value="<?php echo $title; ?>" /></p>
+	<?php endif; if ( $inputs['items'] ) : ?>
 	<p><label for="rss-items-<?php echo $number; ?>"><?php _e('How many items would you like to display?'); ?></label>
-	<select id="rss-items-<?php echo $number; ?>" name="widget-rss[<?php echo $number; ?>][items]">
-<?php
-		for ( $i = 1; $i <= 20; ++$i )
-			echo "<option value='$i' " . selected( $items, $i, false ) . ">$i</option>";
-?>
-	</select></p>
-<?php endif; if ( $inputs['show_summary'] ) : ?>
+		<select id="rss-items-<?php echo $number; ?>" name="widget-rss[<?php echo $number; ?>][items]">
+			<?php
+			for ( $i = 1; $i <= 20; ++$i )
+				echo "<option value='$i' " . selected( $items, $i, false ) . ">$i</option>";
+			?>
+		</select></p>
+	<?php endif; if ( $inputs['show_summary'] ) : ?>
 	<p><input id="rss-show-summary-<?php echo $number; ?>" name="widget-rss[<?php echo $number; ?>][show_summary]" type="checkbox" value="1" <?php if ( $show_summary ) echo 'checked="checked"'; ?>/>
-	<label for="rss-show-summary-<?php echo $number; ?>"><?php _e('Display item content?'); ?></label></p>
-<?php endif; if ( $inputs['show_author'] ) : ?>
+		<label for="rss-show-summary-<?php echo $number; ?>"><?php _e('Display item content?'); ?></label></p>
+	<?php endif; if ( $inputs['show_author'] ) : ?>
 	<p><input id="rss-show-author-<?php echo $number; ?>" name="widget-rss[<?php echo $number; ?>][show_author]" type="checkbox" value="1" <?php if ( $show_author ) echo 'checked="checked"'; ?>/>
-	<label for="rss-show-author-<?php echo $number; ?>"><?php _e('Display item author if available?'); ?></label></p>
-<?php endif; if ( $inputs['show_date'] ) : ?>
+		<label for="rss-show-author-<?php echo $number; ?>"><?php _e('Display item author if available?'); ?></label></p>
+	<?php endif; if ( $inputs['show_date'] ) : ?>
 	<p><input id="rss-show-date-<?php echo $number; ?>" name="widget-rss[<?php echo $number; ?>][show_date]" type="checkbox" value="1" <?php if ( $show_date ) echo 'checked="checked"'; ?>/>
-	<label for="rss-show-date-<?php echo $number; ?>"><?php _e('Display item date?'); ?></label></p>
-<?php
-	endif;
-	foreach ( array_keys($default_inputs) as $input ) :
-		if ( 'hidden' === $inputs[$input] ) :
-			$id = str_replace( '_', '-', $input );
-?>
-	<input type="hidden" id="rss-<?php echo $id; ?>-<?php echo $number; ?>" name="widget-rss[<?php echo $number; ?>][<?php echo $input; ?>]" value="<?php echo $$input; ?>" />
-<?php
+		<label for="rss-show-date-<?php echo $number; ?>"><?php _e('Display item date?'); ?></label></p>
+		<?php
 		endif;
-	endforeach;
-}
+		foreach ( array_keys($default_inputs) as $input ) :
+			if ( 'hidden' === $inputs[$input] ) :
+				$id = str_replace( '_', '-', $input );
+			?>
+			<input type="hidden" id="rss-<?php echo $id; ?>-<?php echo $number; ?>" name="widget-rss[<?php echo $number; ?>][<?php echo $input; ?>]" value="<?php echo $$input; ?>" />
+			<?php
+			endif;
+			endforeach;
+		}
 
 /**
  * Process RSS feed widget data and optionally retrieve feed items.
@@ -1253,7 +1342,7 @@ class WP_Widget_Tag_Cloud extends WP_Widget {
 		 */
 		wp_tag_cloud( apply_filters( 'widget_tag_cloud_args', array(
 			'taxonomy' => $current_taxonomy
-		) ) );
+			) ) );
 
 		echo "</div>\n";
 		echo $after_widget;
@@ -1267,35 +1356,35 @@ class WP_Widget_Tag_Cloud extends WP_Widget {
 
 	function form( $instance ) {
 		$current_taxonomy = $this->_get_current_taxonomy($instance);
-?>
-	<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:') ?></label>
-	<input type="text" class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" value="<?php if (isset ( $instance['title'])) {echo esc_attr( $instance['title'] );} ?>" /></p>
-	<p><label for="<?php echo $this->get_field_id('taxonomy'); ?>"><?php _e('Taxonomy:') ?></label>
-	<select class="widefat" id="<?php echo $this->get_field_id('taxonomy'); ?>" name="<?php echo $this->get_field_name('taxonomy'); ?>">
-	<?php foreach ( get_taxonomies() as $taxonomy ) :
-				$tax = get_taxonomy($taxonomy);
-				if ( !$tax->show_tagcloud || empty($tax->labels->name) )
-					continue;
-	?>
-		<option value="<?php echo esc_attr($taxonomy) ?>" <?php selected($taxonomy, $current_taxonomy) ?>><?php echo $tax->labels->name; ?></option>
-	<?php endforeach; ?>
-	</select></p><?php
-	}
+		?>
+		<p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:') ?></label>
+			<input type="text" class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" value="<?php if (isset ( $instance['title'])) {echo esc_attr( $instance['title'] );} ?>" /></p>
+			<p><label for="<?php echo $this->get_field_id('taxonomy'); ?>"><?php _e('Taxonomy:') ?></label>
+				<select class="widefat" id="<?php echo $this->get_field_id('taxonomy'); ?>" name="<?php echo $this->get_field_name('taxonomy'); ?>">
+					<?php foreach ( get_taxonomies() as $taxonomy ) :
+					$tax = get_taxonomy($taxonomy);
+					if ( !$tax->show_tagcloud || empty($tax->labels->name) )
+						continue;
+					?>
+					<option value="<?php echo esc_attr($taxonomy) ?>" <?php selected($taxonomy, $current_taxonomy) ?>><?php echo $tax->labels->name; ?></option>
+				<?php endforeach; ?>
+				</select></p><?php
+			}
 
-	function _get_current_taxonomy($instance) {
-		if ( !empty($instance['taxonomy']) && taxonomy_exists($instance['taxonomy']) )
-			return $instance['taxonomy'];
+			function _get_current_taxonomy($instance) {
+				if ( !empty($instance['taxonomy']) && taxonomy_exists($instance['taxonomy']) )
+					return $instance['taxonomy'];
 
-		return 'post_tag';
-	}
-}
+				return 'post_tag';
+			}
+		}
 
 /**
  * Navigation Menu widget class
  *
  * @since 3.0.0
  */
- class WP_Nav_Menu_Widget extends WP_Widget {
+class WP_Nav_Menu_Widget extends WP_Widget {
 
 	function __construct() {
 		$widget_ops = array( 'description' => __('Add a custom menu to your sidebar.') );
@@ -1349,13 +1438,13 @@ class WP_Widget_Tag_Cloud extends WP_Widget {
 			<label for="<?php echo $this->get_field_id('nav_menu'); ?>"><?php _e('Select Menu:'); ?></label>
 			<select id="<?php echo $this->get_field_id('nav_menu'); ?>" name="<?php echo $this->get_field_name('nav_menu'); ?>">
 				<option value="0"><?php _e( '&mdash; Select &mdash;' ) ?></option>
-		<?php
-			foreach ( $menus as $menu ) {
-				echo '<option value="' . $menu->term_id . '"'
+				<?php
+				foreach ( $menus as $menu ) {
+					echo '<option value="' . $menu->term_id . '"'
 					. selected( $nav_menu, $menu->term_id, false )
 					. '>'. esc_html( $menu->name ) . '</option>';
-			}
-		?>
+				}
+				?>
 			</select>
 		</p>
 		<?php
@@ -1400,6 +1489,8 @@ function wp_widgets_init() {
 	register_widget('WP_Widget_Tag_Cloud');
 
 	register_widget('WP_Nav_Menu_Widget');
+
+	register_widget('Schedule_Widget');
 
 	/**
 	 * Fires after all default WordPress widgets have been registered.

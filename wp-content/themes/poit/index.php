@@ -16,55 +16,6 @@
 get_header();
 ?>
 
-<div class="boxTopSlider">
-<!--    <a href="" class="leftSlide"></a>-->
-
-    <div class="sliderInner">
-        <ul id="slider">
-            <li>    
-                <div class="item">
-                    <h4>10 причин поступить на ПОИТ</h4>
-                    <img src="<?php bloginfo('stylesheet_directory'); ?>/img/mask1.png" alt=""
-                         style="background-image: url(<?php bloginfo('stylesheet_directory'); ?>/img/content/reasons.jpg);">
-                    <a href="/abiturientu/10-prichin-postupat-na-poit/" title="">Узнать больше</a>
-                </div>
-            </li>  
-            <li>
-                <div class="item">
-                    <h4>Предметы</h4>
-                    <img src="<?php bloginfo('stylesheet_directory'); ?>/img/mask2.png" alt=""
-                         style="background-image: url(<?php bloginfo('stylesheet_directory'); ?>/img/content/subjects.jpg);">
-                    <a href="" title="">Узнать больше</a>
-                </div>
-            </li>    
-            <li>
-                <div class="item">
-                    <h4>Преподаватели</h4>
-                    <img src="<?php bloginfo('stylesheet_directory'); ?>/img/mask3.png" alt=""
-                         style="background-image: url(<?php bloginfo('stylesheet_directory'); ?>/img/content/teachers.jpg);">
-                    <a href="" title="">Узнать больше</a>
-                </div>
-            </li>    
-               <li>
-                <div class="item">
-                    <h4>Преподаватели</h4>
-                    <img src="<?php bloginfo('stylesheet_directory'); ?>/img/mask3.png" alt=""
-                         style="background-image: url(<?php bloginfo('stylesheet_directory'); ?>/img/content/teachers.jpg);">
-                    <a href="" title="">Узнать больше</a>
-                </div>
-            </li> 
-               <li>
-                <div class="item">
-                    <h4>Преподаватели</h4>
-                    <img src="<?php bloginfo('stylesheet_directory'); ?>/img/mask3.png" alt=""
-                         style="background-image: url(<?php bloginfo('stylesheet_directory'); ?>/img/content/teachers.jpg);">
-                    <a href="" title="">Узнать больше</a>
-                </div>
-            </li> 
-        </ul>
-    </div>
-<!--    <a href="" class="rightSlide"></a>-->
-</div>
 <div class="boxContent">
     <section class="mainContent">
         <?php poit_bread_cumps($post); ?>
