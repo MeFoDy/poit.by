@@ -6,7 +6,6 @@
  * @subpackage Twenty_Twelve
  * @since Twenty Twelve 1.0
  */
-
 $teachers = get_post_meta( $post->ID, 'teacher_info', true );
 $current_teacher = array();
 foreach( $teachers as $teacher){
@@ -23,7 +22,7 @@ $current_teacher['science'] = preg_replace('/\n/', '</li><li>', $current_teacher
 		<header class="entry-header">
             <a href="<?php the_permalink(); ?>"
                title="<?php echo esc_attr(sprintf(__('Permalink to %s', 'twentytwelve'), the_title_attribute('echo=0'))); ?>"
-               rel="bookmark"><h1 class="entry-title"><?php the_title(); ?></h1></a>
+               rel="bookmark"><h2 class="entry-title"><?php the_title(); ?></h2></a>
 		</header>
         <span class="teacher-position"><?php echo $current_teacher['position']; ?></span>
 

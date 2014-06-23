@@ -18,6 +18,7 @@ $current_teacher['science'] = preg_replace('/\n/', '</li><li>', $current_teacher
 ?>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+    <?php poit_bread_cumps($post) ?>
     <header class="entry-header">
         <h1 class="entry-title"><?php the_title(); ?></h1>
     </header>
@@ -47,76 +48,27 @@ $current_teacher['science'] = preg_replace('/\n/', '</li><li>', $current_teacher
 <?php the_content(); ?>
     </div><!-- .entry-content -->
     <?php
-        $sched_arr = getSchedule(get_the_title());
-        $sched_today_arr = get_shedile_today_wp(get_the_title());
-        if ($sched_arr) {
+        if (true) {
+            $fio = get_the_title();
     ?>
     <div> 
        <a onClick="return false;" id="shed_all_a" class="active_schedule">Полное расписание</a>
        <a onClick="return false;" id="today_shed_a">Сегодня</a>
         <div id="shedile_all">
-            <div id="schedule-table">
-                <?php foreach ($sched_arr as $key => $day): ?>
-                    <div class="br">
-                    </div>
-                    <div class="dh"><?php echo $key; ?></div>
-                    <table class="c">
-                        <tbody>
-                            <?php foreach ($day as $key_time => $time): ?>
-                            <?php foreach ($time as $key_one_time => $el_one_time): ?>
-                            <tr>
-                                <?php $time_begin = explode(" ", $key_time); ?>
-                                <td class="rhs"><?php echo $time_begin[0]; ?></td>
-                                <td class="rhe"><?php echo $time_begin[1]; ?></td>
-                                <td class="cb">
-                                    <div class="br"></div>
-                                    <div class="cw"><?php echo $el_one_time['weeks']; ?>&nbsp;</div>
-                                    <div class="cs"><?php echo $el_one_time['subgroups']; ?>&nbsp;</div>
-                                    <div class="cn"><?php echo $el_one_time['name']; ?>&nbsp;</div>
-                                    <div class="cr"><?php echo $el_one_time['room']; ?>&nbsp;</div>
-                                    <div class="ct"><?php echo $el_one_time['type']; ?> <?php echo $el_one_time['group']; ?> </div>
-                                </td>
-                            </tr>
-                                <?php endforeach; ?>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                    <?php endforeach; ?>
-            </div>
+            <?php 
+            $hasOutput = printPrettySchedule($fio, true, false);
+            if (!$hasOutput) {
+                echo "Занятий в расписании нет.";
+            }
+            ?>
         </div>
         <div id="shedile_today" style="display:none;">
-            <?php if ($sched_today_arr) { ?>
-            <div id="schedule-table">
-                <?php foreach ($sched_today_arr as $key => $day): ?>
-                    <div class="br">
-                    </div>
-                    <div class="dh"><?php echo $key; ?></div>
-                    <table class="c">
-                        <tbody>
-                            <?php foreach ($day as $key_time => $time): ?>
-                            <?php foreach ($time as $key_one_time => $el_one_time): ?>
-                            <tr>
-                                <?php $time_begin = explode(" ", $key_time); ?>
-                                <td class="rhs"><?php echo $time_begin[0]; ?></td>
-                                <td class="rhe"><?php echo $time_begin[1]; ?></td>
-                                <td class="cb">
-                                    <div class="br"></div>
-                                    <div class="cw"><?php echo $el_one_time['weeks']; ?>&nbsp;</div>
-                                    <div class="cs"><?php echo $el_one_time['subgroups']; ?>&nbsp;</div>
-                                    <div class="cn"><?php echo $el_one_time['name']; ?>&nbsp;</div>
-                                    <div class="cr"><?php echo $el_one_time['room']; ?>&nbsp;</div>
-                                    <div class="ct"><?php echo $el_one_time['type']; ?> <?php echo $el_one_time['group']; ?> </div>
-                                </td>
-                            </tr>
-                                <?php endforeach; ?>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                    <?php endforeach; ?>
-            </div>
-            <?php } else { ?>
-            <p>Сегодня занятий нет</p>
-            <?php } ?>
+            <?php 
+            $hasOutput = printPrettySchedule($fio, true, true);
+            if (!$hasOutput) {
+                echo "Занятий на сегодня в расписании не найдено.";
+            }
+            ?>
         </div>
     </div>
     <?php } ?>
