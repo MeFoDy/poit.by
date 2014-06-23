@@ -498,189 +498,309 @@ add_action('customize_preview_init', 'twentytwelve_customize_preview_js');
 
 add_image_size('loopThumb', 90, 135, true);
 
-function cmp($a, $b)
-{
-    if ($a['day'] == $b['day']) {
-        return 0;
-    }
-    return ($a['day'] < $b['day']) ? -1 : 1;
+/**
+* * * * * * * * * *
+*     SCHEDULE    *
+* * * * * * * * * *
+*/
+
+function print_debug($obj) {
+    echo "<pre>";
+    print_r($obj);
+    echo "</pre>";
 }
 
-function cmp_time($a, $b)
-{
-    if ($a == $b) {
-        return 0;
-    }
-    return ($a < $b) ? -1 : 1;
+function xmlToArraySch($xmlString) {
+    $xml = simplexml_load_string($xmlString);
+    $json = json_encode($xml);
+    $array = json_decode($json, TRUE);
+    return $array;
 }
 
-function getSchedule($namePrepod = "")
-{
-    $namePrepod = explode(" ", $namePrepod);
-    $namePrepod = $namePrepod[0] . " " . mb_substr(trim($namePrepod[1]), 0, 1, 'UTF-8') . "." . mb_substr(trim($namePrepod[2]), 0, 1, 'UTF-8');
+function get_week_number() {
+    $currentYear = date('Y');
+    $currentStart = mktime(0, 0, 0, 9, 1, $currentYear);
+    $nowWeek = time();
+    if ($currentStart > $nowWeek)
+        $currentYear--;
+    $currentStart = mktime(0, 0, 0, 9, 1, $currentYear);
+    $weeksNow = date('W');
+    $weeksSept = date('W', $currentStart);
+    $weekNumber = (52 - $weeksSept + $weeksNow) % 4 + 1;
+    return $weekNumber;
+}
 
-    $result_arr = array();
-    $result_poit_sort = array();
-    $result_poit_sort_day = array();
-    if ($namePrepod != "") {
-        $url = "http://fksis.bsuir.by/wps/schedule/api?classes=1";
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_FAILONERROR, 1);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+function prepareGroupSch($group) {
+    return preg_replace('/[^0-9]/', "", $group);
+}
 
-        $result['content'] = curl_exec($ch);
-        $result['errorno'] = curl_errno($ch);
-        $result['error'] = curl_error($ch);
-        if ($result['errorno'])
-            //print curl_error($ch) . '('.$url.')';
-            return 0;
-        curl_close($ch);
-        $result_poit = Array();
-        if (!$result['errorno']) {
-            $schedule = json_decode($result['content'], true);
-            $day = array("Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс");
-            $time = array(0 => "08:00 09:35", "09:45 11:20", "11:40 13:15", "13:25 15:00", "15:20 16:55", "17:05 18:40", "18:45 20:20", "20:25 22:00");
-            // echo "<pre>"; print_r($schedule); echo "</br>";
-            foreach ($schedule as $item) {
-                if (isset($item['teacher']))
-                    if (strpos(" " . $item['teacher'], $namePrepod)) {
-                        if ($item['type'] == "лк") {
-                            $item['group'] = substr($item['group'], 0, strlen($item['group']) - 1) . 'х';
-                        }
-                        if ($item['weeks'] == "1234") {
-                            $item['weeks'] = "";
-                        } else {
-                            $item['weeks'] = preg_replace('/(\d)(\d)/', "$1,$2", $item['weeks']);
-                            $item['weeks'] = preg_replace('/(\d)(\d)/', "$1,$2", $item['weeks']);
-                        }
-                        if ($item['subgroups'] == "12") {
-                            $item['subgroups'] = "";
-                        } else {
-                            $item['subgroups'] = $item['subgroups'] . "п";
-                        }
+function prepareName($name) {
+    $teacherName = explode(" ", $name);
+    $teacherName = $teacherName[0] . " " . mb_substr(trim($teacherName[1]), 0, 1, 'UTF-8') . "." . mb_substr(trim($teacherName[2]), 0, 1, 'UTF-8') . ".";
+    return $teacherName;
+}
 
-                        $flag = true;
+function getScheduleGroupOnlineSch($group) {
+    $group = preg_replace('/[^\d]/', "", $group);
 
-                        foreach ($result_poit_sort_day[$item['day']][$item['timeSlot']] as &$slot) {
-                            if (
-                                $slot['subgroups'] == $item['subgroups']
-                                && $slot['group'] == $item['group']
-                                && $slot['room'] == $item['room']
-                            ) {
-                                if ($slot['weeks'] != $item['weeks']) {
-                                    $slot['weeks'] .= $item['weeks'];
-                                    $slot['weeks'] = str_replace(',', "", $slot['weeks']);
-                                    $arr = str_split($slot['weeks']);
-                                    asort($arr);
-                                    $slot['weeks'] = implode('', $arr);
-                                    if ($slot['weeks'] == "1234") {
-                                        $slot['weeks'] = "";
-                                    } else {
-                                        $slot['weeks'] = preg_replace('/(\d)(\d)/', "$1,$2", $slot['weeks']);
-                                        $slot['weeks'] = preg_replace('/(\d)(\d)/', "$1,$2", $slot['weeks']);
-                                    }
-                                }
-                                $flag = false;
-                            }
+    $url = "http://bsuir.by/psched/rest/" . $group;
+    $ch = curl_init();
 
-                        }
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_FAILONERROR, 1);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
 
-                        if ($flag)
-                            $result_poit_sort_day[$item['day']][$item['timeSlot']][] = $item;
+    $result['content'] = curl_exec($ch);
+    $result['errorno'] = curl_errno($ch);
+    $result['error'] = curl_error($ch);
+    if ($result['errorno']) {
+        //print curl_error($ch) . '('.$url.')';
+        return false;
+    }
+    curl_close($ch);
+
+    $result['content'] = xmlToArraySch($result['content']);
+    return $result;
+}
+
+function beatifyScheduleResultFromBsuir($group) {
+    $output = array();
+    $group = prepareGroupSch( $group );
+    $result = getScheduleGroupOnlineSch( $group );
+    if ($result === false)
+        return false;
+    foreach ($result['content']['ROW'] as $value) {
+        $attr = $value['@attributes'];
+        array_push($output, array(
+            'group' => $group,
+            'subgroup' => $attr['subgroup'],
+            'weekDay' => $attr['weekDay'],
+            'timePeriod' => $attr['timePeriod'],
+            'weekList' => $attr['weekList'],
+            'subject' => $attr['subject'],
+            'subjectType' => $attr['subjectType'],
+            'auditorium' => $attr['auditorium'],
+            'teacher' => $attr['teacher']
+            ));
+    }
+    return $output;
+}
+
+function getScheduleGroupOffline($group) {
+    $output = array();
+    $filename = ABSPATH . 'wp-content/plugins/fksis-schedule/schedule.json';
+    if (file_exists($filename) && is_readable($filename)) {
+        $json = file_get_contents($filename);
+        $lessons = json_decode($json, true);
+        foreach ($lessons as $lesson) {
+            if ($lesson['group'] == $group) {
+                array_push($output, $lesson);
+            }
+        }
+    } else {
+        return false;
+    }
+    return $output;
+}
+
+function getScheduleTeacherOffline($name) {
+    $output = array();
+    $name = prepareName($name);
+    $filename = ABSPATH . 'wp-content/plugins/fksis-schedule/schedule.json';
+    if (file_exists($filename) && is_readable($filename)) {
+        $json = file_get_contents($filename);
+        $lessons = json_decode($json, true);
+        foreach ($lessons as $lesson) {
+            if ($lesson['teacher'] == $name) {
+                $flag = true;
+                foreach ($output as $key => $value) {
+                    if (
+                           $lesson['teacher']       == $value['teacher']
+                        && $lesson['timePeriod']    == $value['timePeriod']
+                        && $lesson['weekDay']       == $value['weekDay']
+                        && $lesson['weekList']      == $value['weekList']
+                        && $lesson['subject']       == $value['subject']
+                        && $lesson['subjectType']   == $value['subjectType']
+                        && $lesson['auditorium']    == $value['auditorium']
+                        && $lesson['group'] != $value['group']
+                        ) 
+                    {
+                        $flag = false;
+                        $output[$key]['group'][5] = 'x';
                     }
-            }
-            //   echo "<pre>"; print_r($result_poit_sort_day);
-            ksort($result_poit_sort_day);
-            //    echo "<pre>"; print_r($result_poit_sort_day);
-            foreach ($result_poit_sort_day as $key => $item) {
-                $result_poit[$day[$key]] = $item;
-            }
-
-            //  echo "<pre>"; print_r($result_poit);
-            foreach ($result_poit as $key => $value) {
-                $arr_temp = $result_poit[$key];
-                ksort($arr_temp);
-                //uasort($arr_temp, 'cmp_time');
-                //   print_r($arr_temp);
-                $result_poit[$key] = $arr_temp;
-            }
-
-            //   echo "<pre>"; print_r($result_poit);
-            foreach ($result_poit as $key => $item) {
-                foreach ($item as $key_1 => $value) {
-                    $result_poit_sort[$key][$time[$key_1]] = $value;
+                }
+                if ($flag) {
+                    array_push($output, $lesson);
                 }
             }
-            //  echo "<pre>"; print_r($result_poit_sort); die;
-
-            return $result_poit_sort;
         }
-    }
-}
-
-function get_shedile_wp($namePrepod)
-{
-
-    $namePrepod = explode(" ", $namePrepod);
-    //print_r($namePrepod);	die;
-    $arr = getSchedule($namePrepod[0]);
-    uasort($arr, 'cmp');
-    $day = array("Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс");
-    if (!empty($arr)) {
-        return $arr;
-//			echo " </br><table>"; 
-//		foreach($arr as $item) {
-//		   
-//			echo "<tr>";
-//				echo "Предмет: ".$item['name']."</br>";
-//				echo "День недели: ".$day[$item['day']]."</br>";
-//				echo "Учебные недеи: ".$item['weeks']."</br>";	
-//				echo "Время: ".$item['timeSlot']."</br>";
-//				echo "Группа: ".$item['group']."</br>";
-//				echo "Подгруппа:  ".$item['subgroups']."</br>";
-//				echo "Тип занятия: ".$item['type']."</br></br></br>";
-//			echo "</tr>";	
-//		}
-//			echo "</table>";
     } else {
-        return array();
+        return false;
     }
+    return $output;
 }
 
-function get_shedile_today_wp($namePrepod)
-{
-    $schedule = getSchedule($namePrepod);
-
-    $weekNumber = get_week_number();
-    $day = array("Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс");
-    $dayToday = (int)date('w', time()) - 1;
-    if ($dayToday < 0)
-        $dayToday = 6;
-    if (!isset($schedule[$day[$dayToday]])) {
-        return false;
-    }
-    $result[$day[$dayToday]] = array();
-    foreach ($schedule[$day[$dayToday]] as $time_key => $time_array) {
-        foreach ($time_array as $lesson) {
-            if (mb_strpos($lesson['weeks'], $weekNumber) !== false || $lesson['weeks'] == '') {
-                $result[$day[$dayToday]][$time_key][] = $lesson;
-            }
+function getScheduleGroup($group) {
+    $group = prepareGroupSch($group);
+    $result = beatifyScheduleResultFromBsuir($group);
+    if ($result === false) {
+        $result = getScheduleGroupOffline($group);
+        if ($result === false) {
+            return false;
         }
-    }
-    if (!$result[$day[$dayToday]]) {
-        return false;
     }
     return $result;
 }
 
-function get_week_number() {
-    $etalonWeek = mktime(0, 0, 0, 9, 1, 2012);
-    $nowWeek = time();
-    $weekNumber = (($nowWeek - $etalonWeek) / (3600 * 24 * 7)) % 4 + 1;
-    return $weekNumber;
+function cmp_times($a, $b) {
+    if ($a['timePeriod'] == $b['timePeriod'])
+        return 0;
+    return $a['timePeriod'] > $b['timePeriod'] ? 1 : -1;
 }
 
+function weekArray() {
+    return array( 0 => 'пн', 1 => 'вт', 2 => 'ср', 3 => 'чт', 4 => 'пт', 5 => 'сб', 6 => 'вс' );
+}
+
+function prettyScheduleResult($name, $isTeacher = false) {
+    if ($isTeacher) {
+        $result = getScheduleTeacherOffline($name);
+    } else {
+        $result = getScheduleGroup($name);
+    }
+    if ($result === false) {
+        return false;
+    }
+    $output = array();
+    $week = weekArray();
+    foreach ($result as $lesson) {
+        $output[ array_search($lesson['weekDay'], $week) ][] = $lesson;
+    }
+    foreach ($output as &$day) {
+        uasort($day, 'cmp_times');
+    }
+    return $output;
+}
+
+function printPrettySchedule($name, $isTeacher = false, $today = false) {
+    $result = prettyScheduleResult($name, $isTeacher);
+    if ($result === false) {
+        return false;
+    }
+    $week = weekArray();
+    $hasOutput = false;
+
+    echo <<<EOF
+    <div id="schedule-table">
+EOF;
+    
+    foreach ($result as $keyDay => $day) {
+        if ($today) {
+            $todayWeekDay = (date('w') + 6) % 7;
+            if ($keyDay != $todayWeekDay)
+                continue;
+        }
+        $dayName = array_values($day)[0]['weekDay'];
+        echo <<<EOD
+        <div class="br">
+        </div>
+        <div class="dh">$dayName</div>
+        <table class="c">
+            <tbody>
+EOD;
+        foreach ($day as $lesson) {
+            if ($today) {
+                $weekNumber = get_week_number();
+                if (($lesson['weekList'] != "") && (!preg_match("/$weekNumber/i", $lesson['weekList']))) {
+                    continue;
+                }
+            }
+            $subgroup = $lesson['subgroup'];
+            $subgroup .= $subgroup == '' ? '' : "п.";
+            $subjectTarget = $isTeacher ? $lesson['group'] : $lesson['teacher'];
+            $hasOutput = true;
+
+            echo <<<EOL
+            <tr>
+                <td class="rhs">{$lesson['timePeriod']}</td>
+                <td class="cb">
+                    <div class="br"></div>
+                    <div class="cw">{$lesson['weekList']}</div>
+                    <div class="cs">{$subgroup}</div>
+                    <div class="cn">{$lesson['subject']}</div>
+                    <div class="cr">{$lesson['auditorium']}</div>
+                    <div class="ct">{$lesson['subjectType']} {$subjectTarget}</div>
+                </td>
+            </tr>
+EOL;
+        }
+        echo <<<EOD
+            </tbody>
+        </table>
+EOD;
+    }
+
+    echo "</div>";
+    return $hasOutput;
+}
+
+function printShortTodayGroupSchedule($group) {
+    $result = prettyScheduleResult($group);
+    if ($result === false) {
+        return false;
+    }
+    $week = weekArray();
+    $hasOutput = false;
+
+    echo <<<EOF
+    <div id="schedule-table">
+EOF;
+    
+    foreach ($result as $keyDay => $day) {
+        
+        $todayWeekDay = (date('w') + 6) % 7;
+        if ($keyDay != $todayWeekDay)
+            continue;
+        
+        $dayName = array_values($day)[0]['weekDay'];
+        echo <<<EOD
+        <div class="br">
+        </div>
+        <div class="dh">$dayName</div>
+        <table class="c">
+            <tbody>
+EOD;
+        foreach ($day as $lesson) {
+            $weekNumber = get_week_number();
+            if ($lesson['weekList'] != "" && !preg_match("/$weekNumber/i", $lesson['weekList'])) {
+                continue;
+            }
+            
+            $subgroup = $lesson['subgroup'];
+            $subgroup .= $subgroup == '' ? '' : "п.";
+            $subjectTarget = $lesson['group'];
+            $hasOutput = true;
+
+            echo <<<EOL
+            <tr>
+                <td class="rhss">{$lesson['timePeriod']}</td>
+                <td class="cbs">
+                    <div class="br"></div>
+                    <div class="cn">{$lesson['subjectType']} {$lesson['subject']} ({$lesson['auditorium']})</div>
+                    <div class="ct">{$subgroup}</div>
+                </td>
+            </tr>
+EOL;
+        }
+        echo <<<EOD
+            </tbody>
+        </table>
+EOD;
+    }
+
+    echo "</div>";
+    return $hasOutput;
+}
     
